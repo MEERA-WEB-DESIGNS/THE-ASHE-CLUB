@@ -1,0 +1,1117 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr" data-theme="light">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
+<title>Web Building — The Ashé Club</title>
+<meta name="description" content="Premium web architecture and bespoke digital ecosystems by The Ashé Club."/>
+<meta name="theme-color" content="#ebe8e1"/>
+
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400&family=Noto+Nastaliq+Urdu:wght@400;500;600;700&family=Syne:wght@400;500;600;700;800&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet"/>
+
+<style>
+/* =========================================
+   CORE VARIABLES & THEMES
+   ========================================= */
+:root {
+  --bg-primary: #ebe8e1;
+  --bg-secondary: #e2dfd8;
+  --bg-card: #ffffff;
+  --bg-glass: rgba(255, 255, 255, 0.75);
+  --bg-glass-nav: rgba(235, 232, 225, 0.92);
+  
+  --border-subtle: rgba(0, 0, 0, 0.08);
+  --border-accent: rgba(196, 128, 97, 0.4);
+  
+  --text-primary: #1a1a1a;
+  --text-secondary: #555555;
+  --text-muted: #888888;
+  
+  --accent: #c48061;
+  --accent-light: #dca085;
+  --accent-dim: rgba(196, 128, 97, 0.1);
+  --gold: #b8860b;
+  
+  --font-display: 'Cormorant Garamond', serif;
+  --font-ui: 'Syne', sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+  --font-ar: 'Noto Nastaliq Urdu', serif;
+  
+  --radius-sm: 8px;
+  --radius-md: 16px;
+  --radius-lg: 32px;
+  
+  --transition-fast: 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  --transition-base: 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  --transition-slow: 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+  
+  --shadow-glass: 0 8px 32px rgba(0, 0, 0, 0.05);
+  --shadow-card: 0 20px 40px rgba(0, 0, 0, 0.06);
+  
+  --nav-h: 70px;
+  --container: 1200px;
+}
+
+[data-theme="dark"] {
+  --bg-primary: #0a0a0a;
+  --bg-secondary: #121212;
+  --bg-card: #181818;
+  --bg-glass: rgba(20, 20, 20, 0.75);
+  --bg-glass-nav: rgba(10, 10, 10, 0.92);
+  
+  --border-subtle: rgba(255, 255, 255, 0.08);
+  --border-accent: rgba(220, 160, 133, 0.3);
+  
+  --text-primary: #f4f4f4;
+  --text-secondary: #a0a0a0;
+  --text-muted: #666666;
+  
+  --accent: #dca085;
+  --accent-light: #f0bda6;
+  --accent-dim: rgba(220, 160, 133, 0.1);
+  
+  --shadow-glass: 0 8px 32px rgba(0, 0, 0, 0.5);
+  --shadow-card: 0 20px 40px rgba(0, 0, 0, 0.4);
+}
+
+/* =========================================
+   BASE & RTL ENFORCEMENT
+   ========================================= */
+html[lang="ar"], html[lang="ar"] body, [dir="rtl"] { font-family: var(--font-ar), serif !important; }
+[dir="rtl"] h1, [dir="rtl"] h2, [dir="rtl"] h3, [dir="rtl"] h4, [dir="rtl"] p, [dir="rtl"] span, [dir="rtl"] a, [dir="rtl"] li, [dir="rtl"] button, [dir="rtl"] input, [dir="rtl"] textarea {
+  font-family: var(--font-ar), serif !important;
+  line-height: 2 !important;
+}
+[dir="rtl"] .font-mono-keep { font-family: var(--font-mono) !important; line-height: 1.6 !important; letter-spacing: 0 !important; }
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+html { font-size: 15px; scroll-behavior: smooth; }
+@media(min-width: 1200px){ html { font-size: 16px; } }
+body {
+  background: var(--bg-primary); color: var(--text-primary); font-family: var(--font-ui);
+  line-height: 1.6; overflow-x: hidden; transition: background-color var(--transition-base), color var(--transition-base);
+}
+a { color: inherit; text-decoration: none; }
+ul { list-style: none; }
+img { display: block; max-width: 100%; }
+button { background: none; border: none; font-family: inherit; color: inherit; cursor: pointer; }
+input, textarea { font-family: inherit; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+
+/* Scroll Progress */
+.scroll-progress { position: fixed; top: 0; left: 0; height: 3px; background: var(--accent); z-index: 10001; width: 0%; transition: width 0.1s linear; }
+
+/* Utilities */
+.magnetic { display: inline-block; transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+.tilt-card { transform-style: preserve-3d; perspective: 1000px; }
+.tilt-inner { transition: transform 0.1s ease; pointer-events: auto; height: 100%; width: 100%; }
+@media(hover: none){ .tilt-inner { transform: none !important; } }
+
+/* =========================================
+   LOADER
+   ========================================= */
+#loader {
+  position: fixed; inset: 0; z-index: 10000; background: #050505;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; overflow: hidden; perspective: 600px;
+}
+#loader.exit { animation: loaderExit 1s cubic-bezier(0.85, 0, 0.15, 1) forwards; }
+@keyframes loaderExit { 0%{ transform: translateY(0) rotateX(0); opacity: 1; } 60%{ transform: translateY(-20px) rotateX(8deg); opacity: 1; } 100%{ transform: translateY(-110vh) rotateX(15deg); opacity: 0; } }
+
+.ldr-scene { display: flex; flex-direction: column; align-items: center; gap: 22px; transform-style: preserve-3d; }
+.ldr-a-wrap { position: relative; width: 80px; height: 80px; display: flex; align-items: center; justify-content: center; }
+.ldr-a { font-family: var(--font-display); font-size: 5.5rem; font-weight: 600; color: #c48061; line-height: 1; position: absolute; animation: aUnfold 1.6s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+@keyframes aUnfold {
+  0%{ opacity: 0; transform: scale(0.2) rotateY(-90deg) translateZ(-80px); filter: blur(20px); }
+  30%{ opacity: 1; transform: scale(1.1) rotateY(0deg) translateZ(20px); filter: blur(0); }
+  50%{ transform: scale(1) rotateY(0deg) translateZ(0); }
+  70%{ opacity: 1; transform: scale(0.5) rotateX(15deg) translateY(-10px); }
+  85%{ opacity: 0; transform: scale(0.1) rotateX(30deg) translateY(-30px); }
+  100%{ opacity: 0; transform: scale(0.05); }
+}
+.ldr-brand { font-family: var(--font-display); font-size: 1.3rem; color: #f4f4f4; letter-spacing: 0.16em; text-transform: uppercase; opacity: 0; animation: brandReveal 0.7s cubic-bezier(0.16, 1, 0.3, 1) 1.3s forwards; }
+.ldr-brand em { color: #c48061; font-style: italic; }
+@keyframes brandReveal { from { opacity: 0; transform: translateY(16px) translateZ(-20px); } to { opacity: 1; transform: translateY(0) translateZ(0); } }
+.ldr-progress-wrap { width: 140px; height: 1px; background: rgba(255, 255, 255, 0.1); position: relative; overflow: hidden; opacity: 0; animation: fadeIn 0.4s ease 1.6s forwards; }
+.ldr-bar { position: absolute; top: 0; left: 0; height: 100%; width: 0%; background: #c48061; transition: width 0.1s linear; }
+.ldr-count { font-family: var(--font-mono); font-size: 0.65rem; color: rgba(196, 128, 97, 0.7); letter-spacing: 0.2em; opacity: 0; animation: fadeIn 0.4s ease 1.6s forwards; }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+/* =========================================
+   THEME + LANG CONTROLS (Floating Right)
+   ========================================= */
+.ctrl-bar { position: fixed; bottom: 30px; right: 30px; z-index: 9000; display: flex; flex-direction: column; align-items: flex-end; gap: 12px; }
+[dir="rtl"] .ctrl-bar { right: auto; left: 30px; align-items: flex-start; }
+.theme-toggle, .lang-toggle {
+  display: flex; align-items: center; gap: 8px; background: var(--bg-glass); padding: 8px 16px;
+  border-radius: 100px; border: 1px solid var(--border-subtle); backdrop-filter: blur(12px);
+  box-shadow: var(--shadow-glass); cursor: pointer; transition: border-color var(--transition-fast);
+}
+.theme-toggle:hover, .lang-toggle:hover { border-color: var(--accent); }
+.theme-toggle__switch { width: 30px; height: 16px; border: 1px solid var(--border-subtle); border-radius: 20px; position: relative; flex-shrink: 0; pointer-events: none; }
+.theme-toggle__switch::after { content: ''; position: absolute; top: 2px; left: 2px; width: 10px; height: 10px; background: var(--accent); border-radius: 50%; transition: transform var(--transition-fast); }
+[data-theme="dark"] .theme-toggle__switch::after { transform: translateX(14px); }
+.theme-toggle__label, .lang-btn { font-family: var(--font-mono); font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-secondary); }
+.lang-btn.active { color: var(--accent); font-weight: 600; }
+.lang-divider { width: 1px; height: 12px; background: var(--border-subtle); }
+
+/* Floating WhatsApp (Bottom Left) */
+.floating-wa {
+  position: fixed; bottom: 30px; left: 30px; width: 56px; height: 56px; background: #25D366; color: #fff;
+  border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 10px 24px rgba(37, 211, 102, 0.4);
+  z-index: 9000; transition: transform var(--transition-fast);
+}
+[dir="rtl"] .floating-wa { left: auto; right: 30px; }
+.floating-wa:hover { transform: scale(1.1) rotate(10deg); }
+.floating-wa svg { width: 28px; height: 28px; fill: currentColor; }
+
+/* =========================================
+   NAVIGATION
+   ========================================= */
+.nav-floating {
+  position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 8000;
+  display: flex; align-items: center; justify-content: space-between; gap: 24px; padding: 8px 8px 8px 24px;
+  border-radius: 100px; background: var(--bg-glass-nav); backdrop-filter: blur(24px);
+  border: 1px solid var(--border-subtle); box-shadow: var(--shadow-glass); transition: top var(--transition-base), width var(--transition-base);
+  width: calc(100% - 40px); max-width: 1000px;
+}
+.nav-floating.scrolled { top: 10px; }
+.nav__logo { font-family: var(--font-display); font-size: 1.2rem; font-weight: 600; letter-spacing: 0.03em; white-space: nowrap; }
+.nav__logo em { color: var(--accent); font-style: italic; }
+.nav__links { display: flex; gap: 24px; }
+.nav__links a { font-family: var(--font-mono); font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.12em; color: var(--text-secondary); transition: color var(--transition-fast); }
+.nav__links a:hover { color: var(--accent); }
+.nav__cta {
+  background: var(--text-primary); color: var(--bg-primary); padding: 12px 24px; border-radius: 100px;
+  font-family: var(--font-mono); font-size: 0.65rem; text-transform: uppercase; font-weight: 600; letter-spacing: 0.08em;
+  transition: transform var(--transition-fast), background var(--transition-fast), color var(--transition-fast); white-space: nowrap;
+}
+.nav__cta:hover { background: var(--accent); color: #fff; }
+.nav__burger { display: none; width: 40px; height: 40px; border-radius: 50%; align-items: center; justify-content: center; }
+.nav__burger span { display: block; width: 18px; height: 1.5px; background: var(--text-primary); position: relative; transition: all 0.3s; }
+.nav__burger span::before, .nav__burger span::after { content: ''; position: absolute; left: 0; width: 18px; height: 1.5px; background: var(--text-primary); transition: all 0.3s; }
+.nav__burger span::before { top: -6px; } .nav__burger span::after { top: 6px; }
+
+@media(max-width: 860px){
+  .nav-floating { padding: 8px 16px; }
+  .nav__links, .nav__cta { display: none; }
+  .nav__burger { display: flex; }
+}
+
+/* =========================================
+   HERO & 3D CANVAS
+   ========================================= */
+.hero { min-height: 100svh; display: flex; flex-direction: column; justify-content: center; text-align: center; padding: 120px 6% 60px; position: relative; overflow: hidden; }
+#bg-canvas { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 0; opacity: 0.6; pointer-events: none; }
+.hero-content { position: relative; z-index: 1; }
+.hero-hl { font-family: var(--font-display); font-size: clamp(3rem, 10vw, 7.5rem); font-weight: 300; line-height: 0.95; letter-spacing: -0.02em; text-transform: uppercase; margin-bottom: 20px; }
+.hero-hl em { font-style: italic; color: var(--accent); display: block; }
+.hero-sub { font-size: clamp(0.95rem, 1.8vw, 1.15rem); color: var(--text-secondary); max-width: 600px; margin: 0 auto 40px; line-height: 1.8; font-weight: 400; }
+.hero-cta-btn {
+  display: inline-block; background: var(--accent); color: #fff; padding: 16px 36px; border-radius: 100px;
+  font-family: var(--font-mono); font-size: 0.7rem; text-transform: uppercase; font-weight: 600; letter-spacing: 0.1em;
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+}
+.hero-cta-btn:hover { transform: translateY(-4px); box-shadow: 0 10px 20px var(--accent-dim); }
+
+/* =========================================
+   SECTIONS & UTILS
+   ========================================= */
+.section { padding: 120px 6%; position: relative; }
+.section--alt { background: var(--bg-secondary); border-top: 1px solid var(--border-subtle); border-bottom: 1px solid var(--border-subtle); }
+.section__label { display: flex; align-items: center; gap: 12px; font-family: var(--font-mono); font-size: 0.65rem; color: var(--accent); letter-spacing: 0.16em; text-transform: uppercase; margin-bottom: 20px; justify-content: center; }
+.section__label::before, .section__label::after { content: ''; width: 30px; height: 1px; background: var(--accent); }
+.section__title { font-family: var(--font-display); font-size: clamp(2.2rem, 5vw, 4rem); font-weight: 300; line-height: 1.05; letter-spacing: -0.01em; margin-bottom: 60px; text-align: center; }
+.section__title em { color: var(--accent); font-style: italic; }
+.divider { width: 100%; height: 1px; background: var(--border-subtle); }
+
+/* =========================================
+   TIMELINE (Process)
+   ========================================= */
+.process-list { position: relative; max-width: 800px; margin: 0 auto; }
+.process-list::before { content: ''; position: absolute; left: 31px; top: 10px; bottom: 10px; width: 1px; background: var(--border-subtle); }
+@media(max-width: 600px){ .process-list::before { left: 23px; } }
+[dir="rtl"] .process-list::before { left: auto; right: 31px; }
+@media(max-width: 600px){ [dir="rtl"] .process-list::before { right: 23px; } }
+
+.process-item { display: grid; grid-template-columns: 64px 1fr; gap: 32px; padding: 40px 0; position: relative; }
+[dir="rtl"] .process-item { grid-template-columns: 1fr 64px; }
+@media(max-width: 600px){ .process-item { grid-template-columns: 48px 1fr; gap: 20px; padding: 30px 0; } [dir="rtl"] .process-item { grid-template-columns: 1fr 48px; } }
+
+.process-dot { width: 64px; height: 64px; border-radius: 50%; background: var(--bg-card); border: 1px solid var(--border-accent); display: flex; align-items: center; justify-content: center; font-family: var(--font-mono); font-size: 1rem; color: var(--accent); z-index: 2; box-shadow: var(--shadow-glass); }
+[dir="rtl"] .process-dot { order: 2; }
+@media(max-width: 600px){ .process-dot { width: 48px; height: 48px; font-size: 0.8rem; } }
+
+.process-body h3 { font-family: var(--font-display); font-size: 1.8rem; color: var(--text-primary); margin-bottom: 12px; font-weight: 500; }
+.process-body p { font-size: 1rem; color: var(--text-secondary); line-height: 1.7; font-weight: 400; max-width: 580px; }
+.process-dur { font-family: var(--font-mono); font-size: 0.65rem; color: var(--accent); text-transform: uppercase; letter-spacing: 0.08em; margin-top: 16px; display: inline-block; background: var(--accent-dim); padding: 6px 16px; border-radius: 100px; border: 1px solid var(--border-accent); }
+
+/* =========================================
+   PRICING (From Screenshot)
+   ========================================= */
+.pricing-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; max-width: 1200px; margin: 0 auto; }
+@media(max-width: 900px){ .pricing-grid { grid-template-columns: 1fr; max-width: 480px; } }
+
+.price-card {
+  background: var(--bg-card); border-radius: var(--radius-lg); padding: 48px 36px;
+  display: flex; flex-direction: column; transition: transform var(--transition-base), box-shadow var(--transition-base), border-color var(--transition-base);
+  border: 1px solid var(--border-subtle); position: relative; z-index: 1; text-align: left;
+}
+[dir="rtl"] .price-card { text-align: right; }
+.price-card:hover { transform: translateY(-10px); box-shadow: var(--shadow-card); border-color: var(--border-accent); z-index: 2; }
+
+.price-tier { font-family: var(--font-mono); font-size: 0.75rem; color: var(--accent); text-transform: uppercase; letter-spacing: 0.15em; font-weight: 600; margin-bottom: 24px; }
+.price-amt { font-family: var(--font-display); font-size: 3.8rem; color: var(--text-primary); line-height: 1; margin-bottom: 40px; display: flex; align-items: baseline; gap: 8px; font-variant-numeric: tabular-nums; }
+.price-amt span { font-family: var(--font-ui); font-size: 1.2rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0; }
+
+.price-features { display: flex; flex-direction: column; gap: 18px; margin-bottom: 40px; flex: 1; }
+.price-features li { display: flex; align-items: center; gap: 14px; font-size: 0.95rem; color: var(--text-primary); line-height: 1.4; }
+.price-features svg { width: 18px; height: 18px; color: var(--text-muted); flex-shrink: 0; stroke-width: 1.5; }
+
+/* =========================================
+   PREMIUM E-COMMERCE BUTTON SYSTEM
+   ========================================= */
+.price-cta {
+  position: relative; width: 100%; display: flex; align-items: center; justify-content: center;
+  gap: 10px; padding: 17px 28px; border-radius: 100px; cursor: pointer; overflow: hidden;
+  font-family: var(--font-mono); font-size: 0.72rem; text-transform: uppercase;
+  letter-spacing: 0.12em; font-weight: 700; text-decoration: none; border: none;
+  background: linear-gradient(135deg, var(--accent) 0%, #b06a4a 100%);
+  color: #fff; box-shadow: 0 6px 20px rgba(196, 128, 97, 0.38), inset 0 1px 0 rgba(255,255,255,0.18);
+  transition: transform 0.22s cubic-bezier(0.16,1,0.3,1), box-shadow 0.22s cubic-bezier(0.16,1,0.3,1);
+  -webkit-tap-highlight-color: transparent;
+}
+.price-cta::before {
+  content: ''; position: absolute; inset: 0;
+  background: linear-gradient(135deg, rgba(255,255,255,0.18) 0%, transparent 60%);
+  border-radius: inherit; pointer-events: none;
+}
+.price-cta::after {
+  content: ''; position: absolute; inset: -2px; border-radius: 100px;
+  border: 2px solid transparent;
+  background: linear-gradient(var(--bg-card), var(--bg-card)) padding-box,
+              linear-gradient(135deg, var(--accent), #b06a4a) border-box;
+  opacity: 0; transition: opacity 0.22s ease; pointer-events: none;
+}
+.price-cta:hover, .price-cta:focus-visible {
+  transform: translateY(-3px) scale(1.015);
+  box-shadow: 0 14px 32px rgba(196, 128, 97, 0.52), inset 0 1px 0 rgba(255,255,255,0.22);
+}
+.price-cta:active { transform: translateY(0) scale(0.99); box-shadow: 0 4px 10px rgba(196,128,97,0.3); }
+
+.price-cta .cta-wa-icon { width: 16px; height: 16px; fill: currentColor; flex-shrink: 0; }
+.price-cta .cta-arrow { font-size: 0.8rem; transition: transform 0.2s ease; }
+.price-cta:hover .cta-arrow { transform: translateX(4px); }
+
+/* Badge on featured card */
+.price-badge {
+  position: absolute; top: -1px; right: 36px; background: var(--accent); color: #fff;
+  font-family: var(--font-mono); font-size: 0.6rem; font-weight: 700; letter-spacing: 0.1em;
+  text-transform: uppercase; padding: 5px 14px; border-radius: 0 0 10px 10px;
+  box-shadow: 0 4px 12px rgba(196,128,97,0.4);
+}
+[dir="rtl"] .price-badge { right: auto; left: 36px; }
+
+/* Featured card glow */
+.price-card--featured {
+  border-color: var(--border-accent);
+  box-shadow: 0 0 0 1px var(--border-accent), var(--shadow-card);
+}
+.price-card--featured .price-cta {
+  background: linear-gradient(135deg, #1a1a1a 0%, #2c2c2c 100%);
+  box-shadow: 0 6px 20px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.08);
+}
+[data-theme="dark"] .price-card--featured .price-cta {
+  background: linear-gradient(135deg, #f4f4f4 0%, #d8d8d8 100%);
+  color: #1a1a1a;
+}
+.price-card--featured .price-cta:hover {
+  box-shadow: 0 14px 32px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.1);
+}
+
+/* Pulse animation on CTA */
+@keyframes ctaPulse {
+  0%, 100% { box-shadow: 0 6px 20px rgba(196,128,97,0.38), inset 0 1px 0 rgba(255,255,255,0.18); }
+  50% { box-shadow: 0 6px 28px rgba(196,128,97,0.6), inset 0 1px 0 rgba(255,255,255,0.18); }
+}
+.price-card:hover .price-cta:not(:hover) { animation: ctaPulse 2s ease infinite; }
+
+/* =========================================
+   AYAH
+   ========================================= */
+.ayah-section { padding: 120px 6%; text-align: center; position: relative; overflow: hidden; }
+.ayah-section::before { content: ''; position: absolute; inset: 0; background: radial-gradient(circle at 50% 50%, var(--accent-dim), transparent 60%); pointer-events: none; }
+.ayah__arabic { font-family: var(--font-ar), serif !important; font-size: clamp(2rem, 5vw, 4rem); color: var(--accent); margin-bottom: 24px; line-height: 2 !important; direction: rtl; }
+.ayah__translation { font-family: var(--font-display); font-size: clamp(1.1rem, 2.5vw, 1.5rem); font-style: italic; color: var(--text-primary); margin-bottom: 16px; font-weight: 300; }
+.ayah__source { font-family: var(--font-mono); font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.16em; }
+
+/* =========================================
+   FAQ ACCORDION
+   ========================================= */
+.faq-list { max-width: 800px; margin: 0 auto; }
+.faq-item { border-bottom: 1px solid var(--border-subtle); }
+.faq-q { width: 100%; display: flex; justify-content: space-between; align-items: center; gap: 16px; padding: 28px 8px; text-align: left; font-family: var(--font-display); font-size: 1.3rem; color: var(--text-primary); font-weight: 500; }
+[dir="rtl"] .faq-q { text-align: right; }
+.faq-q__icon { width: 28px; height: 28px; border-radius: 50%; border: 1px solid var(--border-accent); display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: transform var(--transition-fast), background var(--transition-fast); position: relative; }
+.faq-q__icon::before, .faq-q__icon::after { content: ''; position: absolute; background: var(--accent); transition: opacity 0.2s; }
+.faq-q__icon::before { width: 12px; height: 1.5px; }
+.faq-q__icon::after { width: 1.5px; height: 12px; }
+.faq-item.open .faq-q__icon { transform: rotate(180deg); background: var(--accent-dim); }
+.faq-item.open .faq-q__icon::after { opacity: 0; }
+.faq-a { max-height: 0; overflow: hidden; transition: max-height var(--transition-base); }
+.faq-a p { font-size: 0.95rem; color: var(--text-secondary); line-height: 1.8; padding: 0 8px 28px; max-width: 700px; font-weight: 400; }
+.faq-item.open .faq-a { max-height: 400px; }
+
+/* =========================================
+   FOOTER
+   ========================================= */
+.footer { background: var(--bg-secondary); padding: 100px 6% 40px; border-top: 1px solid var(--border-subtle); display: flex; flex-direction: column; position: relative; overflow: hidden; }
+.footer-top { display: grid; grid-template-columns: 1fr 1fr 2fr; gap: 48px; margin-bottom: 80px; z-index: 2; position: relative; max-width: var(--container); margin-left: auto; margin-right: auto; width: 100%; }
+@media(max-width: 900px){ .footer-top { grid-template-columns: 1fr 1fr; gap: 40px; } .footer-contact { grid-column: span 2; } }
+@media(max-width: 600px){ .footer-top { grid-template-columns: 1fr; } .footer-contact { grid-column: span 1; } }
+.footer-col-title { font-family: var(--font-mono); font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.12em; margin-bottom: 24px; }
+.footer-links { display: flex; flex-direction: column; gap: 14px; }
+.footer-links a { color: var(--text-secondary); font-size: 0.95rem; transition: color var(--transition-fast), transform var(--transition-fast); display: inline-block; transform-origin: left; }
+.footer-links a:hover { color: var(--accent); transform: translateX(6px); }
+[dir="rtl"] .footer-links a { transform-origin: right; }
+[dir="rtl"] .footer-links a:hover { transform: translateX(-6px); }
+
+.massive-email { display: inline-block; font-family: var(--font-display); font-size: clamp(1.8rem, 4vw, 3rem); color: var(--text-primary); border-bottom: 1px solid var(--border-subtle); padding-bottom: 8px; transition: color var(--transition-fast), border-color var(--transition-fast); line-height: 1; word-break: break-all; margin-bottom: 24px; }
+.massive-email:hover { color: var(--accent); border-color: var(--accent); }
+.footer-socials { display: flex; gap: 16px; margin-top: 24px; }
+.footer-socials a { width: 44px; height: 44px; border-radius: 50%; border: 1px solid var(--border-subtle); display: flex; align-items: center; justify-content: center; color: var(--text-primary); transition: all var(--transition-fast); }
+.footer-socials a:hover { background: var(--accent); border-color: var(--accent); color: #fff; transform: translateY(-4px); }
+.footer-socials svg { width: 18px; height: 18px; fill: currentColor; }
+
+.footer-wordmark { font-family: var(--font-display); font-weight: 600; font-size: 15vw; line-height: 0.75; text-align: center; color: var(--text-primary); letter-spacing: -0.04em; margin-bottom: 40px; opacity: 0.04; z-index: 1; position: relative; user-select: none; white-space: nowrap; }
+.footer-bottom { display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border-subtle); padding-top: 32px; font-family: var(--font-mono); font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.08em; z-index: 2; position: relative; flex-wrap: wrap; gap: 16px; max-width: var(--container); margin: 0 auto; width: 100%; }
+@media(max-width: 600px){ .footer-bottom { flex-direction: column; text-align: center; } }
+
+/* =========================================
+   MODAL (WhatsApp Form)
+   ========================================= */
+.modal-overlay {
+  position: fixed; inset: 0; background: rgba(0,0,0,0.6); backdrop-filter: blur(12px);
+  z-index: 11000; display: flex; align-items: center; justify-content: center;
+  opacity: 0; pointer-events: none; transition: opacity var(--transition-base); padding: 20px;
+}
+.modal-overlay.open { opacity: 1; pointer-events: auto; }
+.modal-content {
+  background: var(--bg-card); border: 1px solid var(--border-accent); border-radius: var(--radius-lg);
+  padding: 48px; width: 100%; max-width: 540px; transform: translateY(40px) scale(0.98);
+  transition: transform var(--transition-base); position: relative; box-shadow: var(--shadow-card);
+}
+.modal-overlay.open .modal-content { transform: translateY(0) scale(1); }
+.modal-close { position: absolute; top: 24px; right: 24px; width: 36px; height: 36px; border-radius: 50%; background: var(--bg-secondary); border: 1px solid var(--border-subtle); display: flex; align-items: center; justify-content: center; font-size: 1.2rem; color: var(--text-secondary); transition: all var(--transition-fast); }
+[dir="rtl"] .modal-close { right: auto; left: 24px; }
+.modal-close:hover { background: var(--accent); color: #fff; border-color: var(--accent); transform: rotate(90deg); }
+
+.modal-title { font-family: var(--font-display); font-size: 2.2rem; color: var(--text-primary); margin-bottom: 8px; line-height: 1.1; font-weight: 500; }
+.modal-subtitle { font-family: var(--font-mono); font-size: 0.75rem; color: var(--accent); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 32px; }
+
+.form-group { margin-bottom: 24px; text-align: left; }
+[dir="rtl"] .form-group { text-align: right; }
+.form-group label { display: block; font-family: var(--font-mono); font-size: 0.65rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 10px; }
+.form-group input, .form-group textarea {
+  width: 100%; background: var(--bg-primary); border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm); padding: 14px 18px; color: var(--text-primary);
+  font-family: inherit; font-size: 0.95rem; transition: border-color 0.3s, box-shadow 0.3s;
+}
+.form-group input:focus, .form-group textarea:focus { border-color: var(--accent); outline: none; box-shadow: 0 0 0 3px var(--accent-dim); }
+
+.form-submit {
+  width: 100%; background: var(--accent); color: #fff; padding: 16px; border-radius: 100px;
+  font-family: var(--font-mono); font-size: 0.75rem; font-weight: 600; text-transform: uppercase;
+  letter-spacing: 0.1em; transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+  margin-top: 10px; display: flex; align-items: center; justify-content: center; gap: 10px;
+}
+.form-submit:hover { transform: translateY(-3px); box-shadow: 0 10px 20px var(--accent-dim); }
+.form-submit svg { width: 18px; height: 18px; fill: currentColor; }
+
+/* =========================================
+   REVEALS (Scroll Animations)
+   ========================================= */
+.reveal { opacity: 0; transform: translateY(40px); transition: opacity 0.9s cubic-bezier(0.16, 1, 0.3, 1), transform 0.9s cubic-bezier(0.16, 1, 0.3, 1); will-change: opacity, transform; }
+.reveal.visible { opacity: 1; transform: translateY(0); }
+.rv1 { transition-delay: 0.1s; } .rv2 { transition-delay: 0.2s; } .rv3 { transition-delay: 0.3s; }
+@media (prefers-reduced-motion: reduce) { .reveal { opacity: 1; transform: none; transition: none; } }
+/* Modal Order UI */
+.modal-order-header { margin-bottom: 24px; }
+.modal-order-badge {
+  display: inline-flex; align-items: center; gap: 6px; background: #25D366; color: #fff;
+  font-family: var(--font-mono); font-size: 0.6rem; font-weight: 700; letter-spacing: 0.1em;
+  text-transform: uppercase; padding: 6px 14px; border-radius: 100px; margin-bottom: 16px;
+}
+.modal-plan-pill {
+  display: flex; align-items: center; gap: 8px; background: var(--accent-dim);
+  border: 1px solid var(--border-accent); border-radius: var(--radius-sm);
+  padding: 12px 18px; margin-bottom: 28px; flex-wrap: wrap;
+}
+.modal-plan-label { font-family: var(--font-mono); font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.08em; }
+.modal-plan-name { font-family: var(--font-display); font-size: 1.1rem; color: var(--accent); font-weight: 600; flex: 1; }
+.modal-plan-price { font-family: var(--font-mono); font-size: 0.75rem; color: var(--text-secondary); font-weight: 600; white-space: nowrap; }
+.modal-trust { font-family: var(--font-mono); font-size: 0.62rem; color: var(--text-muted); text-align: center; margin-top: 14px; letter-spacing: 0.04em; }
+@media(max-width: 600px){ .modal-content { padding: 32px 24px; } }
+</style>
+<body>
+
+<div class="scroll-progress" id="progressBar"></div>
+
+<div id="loader" aria-hidden="true">
+  <div class="ldr-scene">
+    <div class="ldr-a-wrap"><span class="ldr-a">A</span></div>
+    <div class="ldr-brand">The <em>Ashé</em> Club</div>
+    <div class="ldr-progress-wrap"><div class="ldr-bar" id="ldrBar"></div></div>
+    <div class="ldr-count" id="ldrCount">00%</div>
+  </div>
+</div>
+
+<div class="ctrl-bar">
+  <button class="theme-toggle magnetic" id="themeSwitch" aria-label="Toggle theme">
+    <div class="theme-toggle__switch"></div>
+    <span class="theme-toggle__label" id="themeLabel" data-en="Light" data-ar="فاتح">Light</span>
+  </button>
+  <button class="lang-toggle magnetic" id="langToggle" aria-label="Switch language">
+    <span class="lang-btn active" id="enBtn" data-en="EN" data-ar="EN">EN</span>
+    <div class="lang-divider"></div>
+    <span class="lang-btn" id="arBtn" data-en="AR" data-ar="AR">AR</span>
+  </button>
+</div>
+
+<a href="https://wa.me/923286509300" class="floating-wa magnetic" aria-label="Chat on WhatsApp" target="_blank" rel="noopener noreferrer">
+  <svg viewBox="0 0 24 24"><path d="M12.031 0C5.385 0 .003 5.381.003 12.028c0 2.124.553 4.195 1.605 6.015L.003 24l6.113-1.602c1.745.955 3.715 1.458 5.912 1.458h.005c6.645 0 12.026-5.381 12.026-12.026C24.06 5.383 18.678 0 12.031 0zm0 21.849h-.003c-1.803 0-3.568-.484-5.114-1.401l-.367-.217-3.799.996.997-3.705-.238-.379c-.997-1.583-1.523-3.413-1.523-5.275 0-5.467 4.45-9.916 9.923-9.916 5.468 0 9.918 4.45 9.918 9.917-.001 5.467-4.45 9.916-9.918 9.916zm5.438-7.425c-.298-.15-1.764-.871-2.037-.971-.274-.1-.473-.15-.672.15-.2.299-.77 1.019-.944 1.218-.174.2-.348.225-.647.075-.298-.15-1.258-.464-2.396-1.482-.885-.793-1.483-1.774-1.657-2.073-.174-.299-.019-.462.13-.611.134-.134.298-.348.448-.522.15-.174.2-.299.298-.498.1-.2.05-.373-.025-.522-.075-.15-.672-1.618-.921-2.215-.24-.582-.486-.503-.672-.512-.174-.009-.373-.01-.572-.01-.2 0-.522.075-.796.374-.274.299-1.045 1.02-1.045 2.488 0 1.468 1.07 2.887 1.219 3.086.15.2 2.104 3.21 5.097 4.502.713.308 1.269.492 1.704.629.714.227 1.365.195 1.881.118.577-.086 1.764-.721 2.013-1.418.249-.697.249-1.294.174-1.418-.075-.125-.274-.2-.573-.35z"/></svg>
+</a>
+
+<nav class="nav-floating" id="nav">
+  <a href="#" class="nav__logo magnetic">The <em>Ashé</em> Club</a>
+  <ul class="nav__links">
+    <li><a href="#timelines" class="magnetic" data-en="Timelines" data-ar="الجداول الزمنية">Timelines</a></li>
+    <li><a href="#pricing" class="magnetic" data-en="Investment" data-ar="الاستثمار">Investment</a></li>
+    <li><a href="#faq" class="magnetic" data-en="FAQ" data-ar="الأسئلة الشائعة">FAQ</a></li>
+  </ul>
+  <a href="#pricing" class="nav__cta magnetic" data-en="Initiate" data-ar="تواصل">Initiate</a>
+  <button class="nav__burger" id="burgerBtn" aria-label="Open menu"><span></span></button>
+</nav>
+
+<header class="hero">
+  <canvas id="bg-canvas"></canvas>
+  <div class="hero-content">
+    <div class="section__label reveal" style="justify-content: center;" data-en="Digital Architecture" data-ar="الهندسة الرقمية">Digital Architecture</div>
+    <h1 class="hero-hl reveal rv1">
+      <span data-en="Web" data-ar="بناء">Web</span><br>
+      <em data-en="Building." data-ar="المواقع.">Building.</em>
+    </h1>
+    <p class="hero-sub reveal rv2" data-en="Precision-engineered plans tailored for visionary brands. Choose your tier, map out the timeline, and let us construct your digital dominion." data-ar="باقات دقيقة التصميم مصممة للعلامات التجارية ذات الرؤية. اختر مستواك، حدد الجدول الزمني، ودعنا نبني هيمنتك الرقمية.">
+      Precision-engineered plans tailored for visionary brands. Choose your tier, map out the timeline, and let us construct your digital dominion.
+    </p>
+    <div class="reveal rv3">
+      <a href="#pricing" class="hero-cta-btn magnetic" data-en="Select Architecture" data-ar="اختر هندستك">Select Architecture</a>
+    </div>
+  </div>
+</header>
+
+<div class="divider"></div>
+
+<section class="section section--alt" id="timelines">
+  <div class="section__label reveal" data-en="Build Timelines" data-ar="جداول البناء">Build Timelines</div>
+  <h2 class="section__title reveal">
+    <span data-en="How long does it" data-ar="كم يستغرق">How long does it</span> <em data-en="take?" data-ar="الأمر؟">take?</em>
+  </h2>
+  <div class="process-list">
+    <div class="process-item reveal">
+      <div class="process-dot font-mono-keep tilt-card"><div class="tilt-inner">01</div></div>
+      <div class="process-body tilt-card">
+        <div class="tilt-inner">
+          <h3 data-en="Starter Architecture" data-ar="هندسة البداية">Starter Architecture</h3>
+          <p data-en="A streamlined workflow focusing on brand identity integration, rapid layout deployment, and core responsive structuring. Built for swift, flawless execution." data-ar="سير عمل مبسط يركز على تكامل هوية العلامة، ونشر سريع للتصميم، وبناء متجاوب أساسي. مصمم لتنفيذ سريع وخالٍ من العيوب.">A streamlined workflow focusing on brand identity integration, rapid layout deployment, and core responsive structuring. Built for swift, flawless execution.</p>
+          <span class="process-dur font-mono-keep" data-en="2 - 3 Days" data-ar="٢ - ٣ أيام">2 - 3 Days</span>
+        </div>
+      </div>
+    </div>
+    <div class="process-item reveal rv1">
+      <div class="process-dot font-mono-keep tilt-card"><div class="tilt-inner">02</div></div>
+      <div class="process-body tilt-card">
+        <div class="tilt-inner">
+          <h3 data-en="Standard Ecosystem" data-ar="النظام القياسي">Standard Ecosystem</h3>
+          <p data-en="In-depth bespoke UI/UX design featuring enhanced motion graphics, structural multi-page flows, and deliberate typography curation." data-ar="تصميم واجهة وتجربة مستخدم مخصص بعمق، يضم رسوميات متحركة محسنة، وتدفق هيكلي لعدة صفحات، وانتقاء دقيق للخطوط.">In-depth bespoke UI/UX design featuring enhanced motion graphics, structural multi-page flows, and deliberate typography curation.</p>
+          <span class="process-dur font-mono-keep" data-en="1 - 2 Weeks" data-ar="١ - ٢ أسبوع">1 - 2 Weeks</span>
+        </div>
+      </div>
+    </div>
+    <div class="process-item reveal rv2">
+      <div class="process-dot font-mono-keep tilt-card"><div class="tilt-inner">03</div></div>
+      <div class="process-body tilt-card">
+        <div class="tilt-inner">
+          <h3 data-en="Professional Dominion" data-ar="الهيمنة الاحترافية">Professional Dominion</h3>
+          <p data-en="A highly scalable digital platform involving custom forms, complex identity sections, third-party API integrations, and heavy optimization." data-ar="منصة رقمية عالية القابلية للتوسع تتضمن نماذج مخصصة، وأقسام هوية معقدة، وتكامل واجهات برمجة التطبيقات، وتحسينات قوية.">A highly scalable digital platform involving custom forms, complex identity sections, third-party API integrations, and heavy optimization.</p>
+          <span class="process-dur font-mono-keep" data-en="3 - 5 Weeks" data-ar="٣ - ٥ أسابيع">3 - 5 Weeks</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<section class="section" id="pricing">
+  <div class="section__label reveal" data-en="Investment" data-ar="الاستثمار">Investment</div>
+  <h2 class="section__title reveal">
+    <span data-en="Select Your" data-ar="اختر">Select Your</span> <em data-en="Architecture." data-ar="هندستك.">Architecture.</em>
+  </h2>
+
+<div class="pricing-grid">
+    
+    <!-- STARTER TIER -->
+    <div class="price-card tilt-card reveal">
+      <div class="tilt-inner">
+        <div class="price-tier font-mono-keep" data-en="Starter" data-ar="البداية">Starter</div>
+        <div class="price-amt font-mono-keep">
+          <span>PKR</span> 5,000
+        </div>
+        <ul class="price-features">
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="20 6 9 17 4 12"/></svg><span data-en="1-Page Simple Website" data-ar="موقع بسيط بصفحة واحدة">1-Page Simple Website</span></li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="20 6 9 17 4 12"/></svg><span data-en="Basic Layout Architecture" data-ar="هيكل تصميم أساسي">Basic Layout Architecture</span></li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="20 6 9 17 4 12"/></svg><span data-en="2-3 Day Rapid Delivery" data-ar="تسليم سريع خلال ٢-٣ أيام">2-3 Day Rapid Delivery</span></li>
+        </ul>
+        <a href="https://wa.me/923286509300?text=Hello!%20I%27m%20interested%20in%20the%20*Starter%20Architecture*%20plan%20(PKR%205%2C000).%20Please%20guide%20me%20on%20the%20next%20steps.%20%F0%9F%8F%9B%EF%B8%8F" target="_blank" rel="noopener noreferrer" class="price-cta magnetic" data-en="Buy Now — PKR 5,000" data-ar="اشتر الآن — ٥٬٠٠٠ ر.ب">
+          <svg class="cta-wa-icon" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.374 0 0 5.373 0 12c0 2.114.549 4.14 1.595 5.945L.057 24l6.233-1.617A11.947 11.947 0 0012 24c6.627 0 12-5.373 12-12 0-6.628-5.373-12-12-12zm0 21.799a9.79 9.79 0 01-4.989-1.367l-.356-.212-3.698.959.984-3.591-.233-.37A9.774 9.774 0 012.201 12c0-5.411 4.407-9.799 9.799-9.799 5.411 0 9.799 4.388 9.799 9.799 0 5.411-4.388 9.799-9.799 9.799z"/></svg>
+          <span data-en="Buy Now — PKR 5,000" data-ar="اشتر الآن — ٥٬٠٠٠ ر.ب">Buy Now — PKR 5,000</span>
+          <span class="cta-arrow">→</span>
+        </a>
+      </div>
+    </div>
+    
+    <!-- STANDARD TIER -->
+    <div class="price-card price-card--featured tilt-card reveal rv1">
+      <div class="tilt-inner">
+        <div class="price-badge" data-en="Most Popular" data-ar="الأكثر طلباً">Most Popular</div>
+        <div class="price-tier font-mono-keep" data-en="Standard" data-ar="قياسي">Standard</div>
+        <div class="price-amt font-mono-keep">
+          <span>PKR</span> 8,000
+        </div>
+        <ul class="price-features">
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="20 6 9 17 4 12"/></svg><span data-en="3-Page Website Ecosystem" data-ar="نظام موقع بـ٣ صفحات">3-Page Website Ecosystem</span></li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="20 6 9 17 4 12"/></svg><span data-en="Enhanced Animations" data-ar="حركات محسنة">Enhanced Animations</span></li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="20 6 9 17 4 12"/></svg><span data-en="Professional UI/UX Design" data-ar="تصميم احترافي لواجهة المستخدم">Professional UI/UX Design</span></li>
+        </ul>
+        <a href="https://wa.me/923286509300?text=Hello!%20I%27m%20interested%20in%20the%20*Standard%20Ecosystem*%20plan%20(PKR%208%2C000).%20Please%20guide%20me%20on%20the%20next%20steps.%20%F0%9F%8F%9B%EF%B8%8F" target="_blank" rel="noopener noreferrer" class="price-cta magnetic" data-en="Buy Now — PKR 8,000" data-ar="اشتر الآن — ٨٬٠٠٠ ر.ب">
+          <svg class="cta-wa-icon" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.374 0 0 5.373 0 12c0 2.114.549 4.14 1.595 5.945L.057 24l6.233-1.617A11.947 11.947 0 0012 24c6.627 0 12-5.373 12-12 0-6.628-5.373-12-12-12zm0 21.799a9.79 9.79 0 01-4.989-1.367l-.356-.212-3.698.959.984-3.591-.233-.37A9.774 9.774 0 012.201 12c0-5.411 4.407-9.799 9.799-9.799 5.411 0 9.799 4.388 9.799 9.799 0 5.411-4.388 9.799-9.799 9.799z"/></svg>
+          <span data-en="Buy Now — PKR 8,000" data-ar="اشتر الآن — ٨٬٠٠٠ ر.ب">Buy Now — PKR 8,000</span>
+          <span class="cta-arrow">→</span>
+        </a>
+      </div>
+    </div>
+    
+    <!-- PROFESSIONAL TIER -->
+    <div class="price-card tilt-card reveal rv2">
+      <div class="tilt-inner">
+        <div class="price-tier font-mono-keep" data-en="Professional" data-ar="احترافي">Professional</div>
+        <div class="price-amt font-mono-keep">
+          <span>PKR</span> 15,000
+        </div>
+        <ul class="price-features">
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="20 6 9 17 4 12"/></svg><span data-en="5+ Scalable Pages" data-ar="٥+ صفحات قابلة للتوسع">5+ Scalable Pages</span></li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="20 6 9 17 4 12"/></svg><span data-en="About Us & Identity Section" data-ar="قسم من نحن والهوية">About Us & Identity Section</span></li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="20 6 9 17 4 12"/></svg><span data-en="Integrated Contact Form" data-ar="نموذج اتصال مدمج">Integrated Contact Form</span></li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="20 6 9 17 4 12"/></svg><span data-en="Floating WhatsApp API Logo" data-ar="أيقونة واتساب العائمة">Floating WhatsApp API Logo</span></li>
+        </ul>
+        <a href="https://wa.me/923286509300?text=Hello!%20I%27m%20interested%20in%20the%20*Professional%20Dominion*%20plan%20(PKR%2015%2C000).%20Please%20guide%20me%20on%20the%20next%20steps.%20%F0%9F%8F%9B%EF%B8%8F" target="_blank" rel="noopener noreferrer" class="price-cta magnetic" data-en="Buy Now — PKR 15,000" data-ar="اشتر الآن — ١٥٬٠٠٠ ر.ب">
+          <svg class="cta-wa-icon" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.374 0 0 5.373 0 12c0 2.114.549 4.14 1.595 5.945L.057 24l6.233-1.617A11.947 11.947 0 0012 24c6.627 0 12-5.373 12-12 0-6.628-5.373-12-12-12zm0 21.799a9.79 9.79 0 01-4.989-1.367l-.356-.212-3.698.959.984-3.591-.233-.37A9.774 9.774 0 012.201 12c0-5.411 4.407-9.799 9.799-9.799 5.411 0 9.799 4.388 9.799 9.799 0 5.411-4.388 9.799-9.799 9.799z"/></svg>
+          <span data-en="Buy Now — PKR 15,000" data-ar="اشتر الآن — ١٥٬٠٠٠ ر.ب">Buy Now — PKR 15,000</span>
+          <span class="cta-arrow">→</span>
+        </a>
+      </div>
+    </div>
+    
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<section class="ayah-section">
+  <p class="ayah__arabic reveal">وَأَنَّ سَعْيَهُ سَوْفَ يُرَى</p>
+  <p class="ayah__translation reveal rv1" data-en='"And that his effort is going to be seen."' data-ar='"وأن سعيه سوف يُرى"'>"And that his effort is going to be seen."</p>
+  <p class="ayah__source reveal rv2">— <span data-en="Surah An-Najm 53:40" data-ar="سورة النجم ٥٣:٤٠">Surah An-Najm 53:40</span></p>
+</section>
+
+<div class="divider"></div>
+
+<section class="section section--alt" id="faq">
+  <div class="section__label reveal" data-en="Inquiries" data-ar="استفسارات">Inquiries</div>
+  <h2 class="section__title reveal">
+    <span data-en="Everything you" data-ar="كل ما تحتاج">Everything you</span><br><em data-en="need to know." data-ar="معرفته.">need to know.</em>
+  </h2>
+  <div class="faq-list reveal">
+    <div class="faq-item open">
+      <button class="faq-q">
+        <span data-en="How does the website building process start?" data-ar="كيف تبدأ عملية بناء الموقع؟">How does the website building process start?</span>
+        <span class="faq-q__icon"></span>
+      </button>
+      <div class="faq-a"><p data-en="It starts with a deep dive into your brand's vision. Once you select a plan and fill out the brief popup form, our architect will immediately reach out via WhatsApp to finalize the scope." data-ar="تبدأ العملية بالغوص العميق في رؤية علامتك. بمجرد اختيار الخطة وتعبئة النموذج المختصر، سيتواصل معك مهندسنا عبر واتساب لتحديد النطاق.">It starts with a deep dive into your brand's vision. Once you select a plan and fill out the brief popup form, our architect will immediately reach out via WhatsApp to finalize the scope.</p></div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q">
+        <span data-en="Can I switch my plan later?" data-ar="هل يمكنني تغيير الباقة لاحقاً؟">Can I switch my plan later?</span>
+        <span class="faq-q__icon"></span>
+      </button>
+      <div class="faq-a"><p data-en="Yes, your chosen plan acts as a baseline. Upgrading to a more robust package (like moving from Standard to Professional) is seamlessly handled during the onboarding." data-ar="نعم، خطتك هي مجرد أساس. الترقية إلى باقة أشمل (مثل الانتقال من القياسي إلى الاحترافي) تتم بسلاسة أثناء الإعداد.">Yes, your chosen plan acts as a baseline. Upgrading to a more robust package (like moving from Standard to Professional) is seamlessly handled during the onboarding.</p></div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q">
+        <span data-en="What is required from my end?" data-ar="ما المطلوب من جهتي؟">What is required from my end?</span>
+        <span class="faq-q__icon"></span>
+      </button>
+      <div class="faq-a"><p data-en="We need your brand assets (logos, typography if any), high-resolution media, and a clear understanding of your business goals. We handle the rest—from copywriting to motion design." data-ar="نحتاج إلى أصول علامتك التجارية (شعارات، خطوط)، وسائط عالية الدقة، وفهم واضح لأهدافك. نحن نتولى الباقي — من كتابة النصوص إلى تصميم الحركة.">We need your brand assets (logos, typography if any), high-resolution media, and a clear understanding of your business goals. We handle the rest—from copywriting to motion design.</p></div>
+    </div>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="footer-top">
+    <div>
+      <div class="footer-col-title" data-en="Headquarters" data-ar="المقر الرئيسي">Headquarters</div>
+      <p style="color:var(--text-secondary);font-size:0.95rem;line-height:1.8;">
+        <span data-en="The Ashé Club" data-ar="نادي أشيه">The Ashé Club</span><br>
+        <span data-en="Khanpur, Punjab" data-ar="خانبور، البنجاب">Khanpur, Punjab</span><br>
+        <span data-en="Pakistan" data-ar="باكستان">Pakistan</span>
+      </p>
+      <div class="footer-socials">
+        <a href="#" aria-label="Instagram" class="magnetic"><svg viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204 0.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg></a>
+        <a href="#" aria-label="LinkedIn" class="magnetic"><svg viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg></a>
+      </div>
+    </div>
+    <div>
+      <div class="footer-col-title" data-en="Sitemap" data-ar="خريطة الموقع">Sitemap</div>
+      <div class="footer-links">
+        <a href="#timelines" data-en="Process & Timelines" data-ar="العملية والجداول">Process & Timelines</a>
+        <a href="#pricing" data-en="Architecture Plans" data-ar="باقات الهندسة">Architecture Plans</a>
+        <a href="#faq" data-en="Client FAQ" data-ar="أسئلة العملاء">Client FAQ</a>
+      </div>
+    </div>
+    <div class="footer-contact">
+      <div class="footer-col-title" data-en="Initiate" data-ar="تواصل معنا">Initiate</div>
+      <a href="mailto:hello@theashe.club" class="massive-email font-mono-keep">hello@theashe.club</a>
+      <p style="color:var(--text-secondary);font-size:0.95rem; max-width:300px;" data-en="Send us a brief email or select a plan to connect directly with our architects." data-ar="أرسل لنا بريدًا إلكترونيًا أو اختر باقة للتواصل مباشرة مع مهندسينا.">Send us a brief email or select a plan to connect directly with our architects.</p>
+    </div>
+  </div>
+  <div class="footer-wordmark">THE ASHÉ CLUB</div>
+  <div class="footer-bottom">
+    <div>&copy; 2026 <span data-en="The Ashé Club. All rights reserved." data-ar="نادي أشيه. جميع الحقوق محفوظة.">The Ashé Club. All rights reserved.</span></div>
+    <div><span data-en="Crafted with Intention" data-ar="صُنع بإتقان">Crafted with Intention</span></div>
+  </div>
+</footer>
+
+<div class="modal-overlay" id="planModal">
+  <div class="modal-content">
+    <button class="modal-close" onclick="ModalEngine.close()" aria-label="Close Modal">&times;</button>
+
+    <!-- Order Summary Header -->
+    <div class="modal-order-header">
+      <div class="modal-order-badge">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.374 0 0 5.373 0 12c0 2.114.549 4.14 1.595 5.945L.057 24l6.233-1.617A11.947 11.947 0 0012 24c6.627 0 12-5.373 12-12 0-6.628-5.373-12-12-12zm0 21.799a9.79 9.79 0 01-4.989-1.367l-.356-.212-3.698.959.984-3.591-.233-.37A9.774 9.774 0 012.201 12c0-5.411 4.407-9.799 9.799-9.799 5.411 0 9.799 4.388 9.799 9.799 0 5.411-4.388 9.799-9.799 9.799z"/></svg>
+        <span data-en="WhatsApp Order" data-ar="طلب واتساب">WhatsApp Order</span>
+      </div>
+      <h3 class="modal-title" id="modalTitle" data-en="Complete Your Order" data-ar="أكمل طلبك">Complete Your Order</h3>
+      <p class="modal-subtitle" data-en="Fill in your details and we'll connect on WhatsApp instantly." data-ar="أدخل بياناتك وسنتواصل عبر واتساب فوراً.">Fill in your details and we'll connect on WhatsApp instantly.</p>
+    </div>
+
+    <!-- Selected Plan Display -->
+    <div class="modal-plan-pill" id="modalPlanPill">
+      <span class="modal-plan-label" data-en="Selected Plan:" data-ar="الباقة المختارة:">Selected Plan:</span>
+      <span class="modal-plan-name" id="modalPlanName">—</span>
+      <span class="modal-plan-price" id="modalPlanPrice"></span>
+    </div>
+
+    <form id="planForm">
+      <input type="hidden" id="selectedPlan" value="">
+      <input type="hidden" id="selectedPrice" value="">
+
+      <div class="form-group">
+        <label data-en="Your Full Name" data-ar="الاسم الكامل">Your Full Name</label>
+        <input type="text" id="clientName" required placeholder="e.g. Ahmed Raza">
+      </div>
+
+      <div class="form-group">
+        <label data-en="Brand / Business Name" data-ar="اسم العلامة التجارية">Brand / Business Name</label>
+        <input type="text" id="brandName" required placeholder="e.g. Nova Studios">
+      </div>
+
+      <div class="form-group">
+        <label data-en="Project Brief" data-ar="ملخص المشروع">Project Brief</label>
+        <textarea id="projectDetails" rows="3" required placeholder="What are you building? (e.g. portfolio, store, agency site...)"></textarea>
+      </div>
+
+      <button type="submit" class="form-submit magnetic">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.374 0 0 5.373 0 12c0 2.114.549 4.14 1.595 5.945L.057 24l6.233-1.617A11.947 11.947 0 0012 24c6.627 0 12-5.373 12-12 0-6.628-5.373-12-12-12zm0 21.799a9.79 9.79 0 01-4.989-1.367l-.356-.212-3.698.959.984-3.591-.233-.37A9.774 9.774 0 012.201 12c0-5.411 4.407-9.799 9.799-9.799 5.411 0 9.799 4.388 9.799 9.799 0 5.411-4.388 9.799-9.799 9.799z"/></svg>
+        <span data-en="Order via WhatsApp →" data-ar="اطلب عبر واتساب ←">Order via WhatsApp →</span>
+      </button>
+
+      <p class="modal-trust" data-en="🔒 Your info is only shared with our architect on WhatsApp." data-ar="🔒 بياناتك تُشارك فقط مع مهندسنا عبر واتساب.">🔒 Your info is only shared with our architect on WhatsApp.</p>
+    </form>
+  </div>
+</div>
+
+<script>
+'use strict';
+
+let currentLang = 'en';
+
+/* =========================================
+   SCROLL PROGRESS ENGINE
+   ========================================= */
+const FeaturesEngine = (() => {
+  function init() {
+    window.addEventListener('scroll', () => {
+      const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+      const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+      const scrolled = height > 0 ? (winScroll / height) * 100 : 0;
+      const bar = document.getElementById('progressBar');
+      if (bar) bar.style.width = scrolled + '%';
+    }, { passive: true });
+  }
+  return { init };
+})();
+
+/* =========================================
+   LOADER ENGINE
+   ========================================= */
+const LoaderEngine = (() => {
+  function init() {
+    const loader = document.getElementById('loader');
+    const bar = document.getElementById('ldrBar');
+    const count = document.getElementById('ldrCount');
+    if (!loader) return;
+    document.body.style.overflow = 'hidden';
+    let pct = 0;
+    setTimeout(() => {
+      const iv = setInterval(() => {
+        pct += Math.floor(Math.random() * 15) + 5;
+        if (pct >= 100) {
+          pct = 100; clearInterval(iv);
+          count.textContent = '100%'; bar.style.width = '100%';
+          setTimeout(() => {
+            loader.classList.add('exit');
+            document.body.style.overflow = '';
+            RevealEngine.check();
+          }, 350);
+          return;
+        }
+        count.textContent = String(pct).padStart(2, '0') + '%';
+        bar.style.width = pct + '%';
+      }, 100);
+    }, 200);
+  }
+  return { init };
+})();
+
+/* =========================================
+   NAV ENGINE
+   ========================================= */
+const NavEngine = (() => {
+  function init() {
+    const nav = document.getElementById('nav');
+    if (nav) {
+      window.addEventListener('scroll', () => {
+        nav.classList.toggle('scrolled', window.scrollY > 70);
+      }, { passive: true });
+    }
+  }
+  return { init };
+})();
+
+/* =========================================
+   THEME ENGINE
+   ========================================= */
+const ThemeEngine = (() => {
+  function init() {
+    const sw = document.getElementById('themeSwitch');
+    const lbl = document.getElementById('themeLabel');
+    if (!sw) return;
+    sw.addEventListener('click', () => {
+      const cur = document.documentElement.getAttribute('data-theme');
+      const next = cur === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', next);
+      document.querySelector('meta[name="theme-color"]').setAttribute('content', next === 'dark' ? '#0a0a0a' : '#ebe8e1');
+      if (lbl) {
+        lbl.textContent = currentLang === 'ar' ? (next === 'dark' ? 'داكن' : 'فاتح') : (next === 'dark' ? 'Dark' : 'Light');
+      }
+    });
+  }
+  return { init };
+})();
+
+/* =========================================
+   LANG ENGINE (Bilingual Dual Theme)
+   ========================================= */
+const LangEngine = (() => {
+  function applyLang(lang) {
+    currentLang = lang;
+    document.documentElement.lang = lang;
+    document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
+
+    document.querySelectorAll('[data-en]').forEach(el => {
+      const txt = el.getAttribute('data-' + lang);
+      if (txt) el.innerHTML = txt;
+    });
+
+    const lbl = document.getElementById('themeLabel');
+    if (lbl) {
+      const theme = document.documentElement.getAttribute('data-theme');
+      lbl.textContent = lang === 'ar' ? (theme === 'dark' ? 'داكن' : 'فاتح') : (theme === 'dark' ? 'Dark' : 'Light');
+    }
+
+    document.getElementById('enBtn').classList.toggle('active', lang === 'en');
+    document.getElementById('arBtn').classList.toggle('active', lang === 'ar');
+  }
+  function init() {
+    const btn = document.getElementById('langToggle');
+    if (!btn) return;
+    btn.addEventListener('click', () => applyLang(currentLang === 'en' ? 'ar' : 'en'));
+    document.getElementById('enBtn').classList.add('active');
+  }
+  return { init, applyLang };
+})();
+
+/* =========================================
+   ANIMATION ENGINES (Reveal, Magnetic, Tilt)
+   ========================================= */
+const RevealEngine = (() => {
+  let obs;
+  function check() {
+    document.querySelectorAll('.reveal:not(.visible)').forEach(el => {
+      if (el.getBoundingClientRect().top < window.innerHeight - 40) el.classList.add('visible');
+    });
+  }
+  function init() {
+    const els = document.querySelectorAll('.reveal');
+    if (!els.length) return;
+    obs = new IntersectionObserver(entries => {
+      entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); obs.unobserve(e.target); } });
+    }, { threshold: 0.15, rootMargin: '0px 0px -40px 0px' });
+    els.forEach(el => obs.observe(el));
+  }
+  return { init, check };
+})();
+
+const MagneticEngine = (() => {
+  function init() {
+    const mEls = document.querySelectorAll('.magnetic');
+    mEls.forEach(el => {
+      el.addEventListener('mousemove', e => {
+        const pos = el.getBoundingClientRect();
+        const x = e.clientX - pos.left - pos.width / 2;
+        const y = e.clientY - pos.top - pos.height / 2;
+        el.style.transform = `translate(${x * 0.3}px, ${y * 0.3}px)`;
+      });
+      el.addEventListener('mouseleave', () => { el.style.transform = 'translate(0px, 0px)'; });
+    });
+  }
+  return { init };
+})();
+
+const TiltEngine = (() => {
+  function init() {
+    const cards = document.querySelectorAll('.tilt-card');
+    cards.forEach(card => {
+      const inner = card.querySelector('.tilt-inner');
+      if(!inner) return;
+      card.addEventListener('mousemove', e => {
+        const rect = card.getBoundingClientRect();
+        const x = e.clientX - rect.left; const y = e.clientY - rect.top;
+        const centerX = rect.width / 2; const centerY = rect.height / 2;
+        const rotateX = ((y - centerY) / centerY) * -10;
+        const rotateY = ((x - centerX) / centerX) * 10;
+        inner.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+      });
+      card.addEventListener('mouseleave', () => { inner.style.transform = 'rotateX(0deg) rotateY(0deg)'; });
+    });
+  }
+  return { init };
+})();
+
+/* =========================================
+   FAQ ENGINE
+   ========================================= */
+const FaqEngine = (() => {
+  function init() {
+    document.querySelectorAll('.faq-item').forEach(item => {
+      const q = item.querySelector('.faq-q');
+      q.addEventListener('click', () => {
+        const wasOpen = item.classList.contains('open');
+        document.querySelectorAll('.faq-item.open').forEach(o => o.classList.remove('open'));
+        if (!wasOpen) item.classList.add('open');
+      });
+    });
+  }
+  return { init };
+})();
+
+/* =========================================
+   MODAL & WHATSAPP PURCHASE ENGINE
+   ========================================= */
+const ModalEngine = (() => {
+  const modal = document.getElementById('planModal');
+
+  function open(planName, planPrice) {
+    document.getElementById('selectedPlan').value = planName;
+    document.getElementById('selectedPrice').value = planPrice || '';
+    document.getElementById('modalTitle').textContent = 'Complete Your Order';
+    const nameEl = document.getElementById('modalPlanName');
+    const priceEl = document.getElementById('modalPlanPrice');
+    if (nameEl) nameEl.textContent = planName;
+    if (priceEl) priceEl.textContent = planPrice ? `PKR ${planPrice}` : '';
+    modal.classList.add('open');
+    document.body.style.overflow = 'hidden';
+    // Focus first input for accessibility
+    setTimeout(() => { const inp = modal.querySelector('input[type="text"]'); if(inp) inp.focus(); }, 300);
+  }
+
+  function close() {
+    modal.classList.remove('open');
+    document.body.style.overflow = '';
+  }
+
+  function init() {
+    if (!modal) return;
+    const form = document.getElementById('planForm');
+
+    // Close on backdrop click
+    modal.addEventListener('click', e => { if (e.target === modal) close(); });
+
+    // Close on Escape key
+    document.addEventListener('keydown', e => { if (e.key === 'Escape' && modal.classList.contains('open')) close(); });
+
+    // Form submit → WhatsApp purchase message
+    form.addEventListener('submit', e => {
+      e.preventDefault();
+
+      const plan    = document.getElementById('selectedPlan').value;
+      const price   = document.getElementById('selectedPrice').value;
+      const name    = document.getElementById('clientName').value.trim();
+      const brand   = document.getElementById('brandName').value.trim();
+      const details = document.getElementById('projectDetails').value.trim();
+
+      const message =
+        `🏛️ *New Order — The Ashé Club*\n` +
+        `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n` +
+        `🛒 *Order Details*\n` +
+        `   📦 Plan: *${plan}*\n` +
+        (price ? `   💰 Price: *PKR ${price}*\n` : '') +
+        `\n👤 *Client Information*\n` +
+        `   Name: ${name}\n` +
+        `   Brand: ${brand}\n\n` +
+        `📝 *Project Brief*\n` +
+        `   "${details}"\n\n` +
+        `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n` +
+        `✅ *Ready to proceed. Please confirm availability.*`;
+
+      const waNumber = '923286509300';
+      const waLink = `https://wa.me/${waNumber}?text=${encodeURIComponent(message)}`;
+
+      window.open(waLink, '_blank', 'noopener,noreferrer');
+      close();
+      form.reset();
+    });
+  }
+
+  return { init, open, close };
+})();
+
+window.ModalEngine = ModalEngine;
+
+/* =========================================
+   3D CANVAS (Particles)
+   ========================================= */
+const Canvas3D = (() => {
+  function init() {
+    const canvas = document.getElementById('bg-canvas');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    let W, H, pts = [], t = 0;
+    const N = 80;
+
+    function resize() { W = canvas.width = canvas.offsetWidth; H = canvas.height = canvas.offsetHeight; }
+    resize();
+    window.addEventListener('resize', resize, { passive: true });
+
+    for (let i = 0; i < N; i++) {
+      const phi = Math.acos(1 - 2 * (i + 0.5) / N);
+      const theta = Math.PI * (1 + Math.sqrt(5)) * i;
+      pts.push({ x: Math.sin(phi) * Math.cos(theta), y: Math.sin(phi) * Math.sin(theta), z: Math.cos(phi) });
+    }
+
+    function project(x, y, z) {
+      const fov = 400, zOff = 3.5;
+      const scale = fov / (fov + z * 1.5 + zOff);
+      return { px: x * scale * W * 0.35 + W / 2, py: y * scale * H * 0.35 + H / 2, s: scale };
+    }
+
+    let lastFrame = 0;
+    function draw(now) {
+      if (now - lastFrame < 33) { requestAnimationFrame(draw); return; }
+      lastFrame = now;
+      ctx.clearRect(0, 0, W, H);
+      t += 0.008;
+      const cosT = Math.cos(t * 0.5), sinT = Math.sin(t * 0.5);
+      const cosT2 = Math.cos(t * 0.3), sinT2 = Math.sin(t * 0.3);
+      const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+      const lineColor = isDark ? 'rgba(220,160,133,' : 'rgba(196,128,97,';
+
+      const projected = pts.map(p => {
+        const rx = p.x * cosT - p.z * sinT;
+        const rz = p.x * sinT + p.z * cosT;
+        const ry = p.y * cosT2 - rz * sinT2;
+        const rz2 = p.y * sinT2 + rz * cosT2;
+        return { ...project(rx, ry, rz2), ox: rx, oy: ry, oz: rz2 };
+      });
+
+      for (let i = 0; i < projected.length; i++) {
+        for (let j = i + 1; j < projected.length; j++) {
+          const dx2 = projected[i].ox - projected[j].ox, dy2 = projected[i].oy - projected[j].oy, dz2 = projected[i].oz - projected[j].oz;
+          const dist = Math.sqrt(dx2 * dx2 + dy2 * dy2 + dz2 * dz2);
+          if (dist < 0.6) {
+            const alpha = (1 - dist / 0.6) * 0.25;
+            ctx.beginPath();
+            ctx.moveTo(projected[i].px, projected[i].py);
+            ctx.lineTo(projected[j].px, projected[j].py);
+            ctx.strokeStyle = lineColor + alpha + ')';
+            ctx.lineWidth = 0.8;
+            ctx.stroke();
+          }
+        }
+      }
+      projected.forEach(p => {
+        const r = Math.max(1, 2.5 * p.s);
+        const alpha = 0.4 + 0.6 * p.s;
+        ctx.beginPath();
+        ctx.arc(p.px, p.py, r, 0, Math.PI * 2);
+        ctx.fillStyle = lineColor + alpha + ')';
+        ctx.fill();
+      });
+      requestAnimationFrame(draw);
+    }
+    requestAnimationFrame(draw);
+  }
+  return { init };
+})();
+
+/* =========================================
+   BOOTSTRAP
+   ========================================= */
+document.addEventListener('DOMContentLoaded', () => {
+  FeaturesEngine.init();
+  LoaderEngine.init();
+  NavEngine.init();
+  ThemeEngine.init();
+  LangEngine.init();
+  RevealEngine.init();
+  MagneticEngine.init();
+  TiltEngine.init();
+  FaqEngine.init();
+  ModalEngine.init();
+  Canvas3D.init();
+});
+</script>
+</body>
+</html>
